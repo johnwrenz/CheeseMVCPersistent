@@ -4,73 +4,80 @@ using System.Collections.Generic;
 using CheeseMVC.ViewModels;
 using CheeseMVC.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CheeseMVC.Controllers
 {
-    public class CheeseController : Controller
-    {
-        private CheeseDbContext context;
+	public class CheeseController : Controller
+	{
+		private CheeseDbContext context;
+		public CheeseController(CheeseDbContext dbContext)
+		{
+			context = dbContext;
+		}
 
-        public CheeseController(CheeseDbContext dbContext)
-        {
-            context = dbContext;
-        }
+		// GET: /<controller>/
+		public IActionResult Index()
+		{
+			IList<Cheese> cheeses = context.Cheeses.Include(c => c.Category).ToList();
+			return View(cheeses);
+			
+		}
 
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            List<Cheese> cheeses = context.Cheeses.ToList();
+		public IActionResult Add()
+		{
+			AddCheeseViewModel addCheeseViewModel = new AddCheeseViewModel(context.Categories.ToList());
+			return View(addCheeseViewModel);
+		}
 
-            return View(cheeses);
-        }
+		[HttpPost]
+		public IActionResult Add(AddCheeseViewModel addCheeseViewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				// Add the new cheese to my existing cheeses
+				//Cheese newCheese = new Cheese
+				CheeseCategory newCheeseCategory =
+					context.Categories.Single(c => c.ID == addCheeseViewModel.CategoryID);
+				Cheese newCheese = new Cheese
+				{
+					Name = addCheeseViewModel.Name,
+					Description = addCheeseViewModel.Description,
+					Category = newCheeseCategory
+				};
+				//context.Categories.Single(c => c.ID == addCheeseViewModel.CategoryID);
+				//Type = addCheeseViewModel.Type
 
-        public IActionResult Add()
-        {
-            AddCheeseViewModel addCheeseViewModel = new AddCheeseViewModel();
-            return View(addCheeseViewModel);
-        }
+				//context.Categories.ToList();
 
-        [HttpPost]
-        public IActionResult Add(AddCheeseViewModel addCheeseViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                // Add the new cheese to my existing cheeses
-                Cheese newCheese = new Cheese
-                {
-                    Name = addCheeseViewModel.Name,
-                    Description = addCheeseViewModel.Description,
-                    Type = addCheeseViewModel.Type
-                };
+				context.Cheeses.Add(newCheese);
+				context.SaveChanges();
+				return Redirect("/Cheese");
+			}
+				return View(addCheeseViewModel);
+		}
+			public IActionResult Remove()
+		{
+			ViewBag.title = "Remove Cheeses";
+			ViewBag.cheeses = context.Cheeses.ToList();
+			return View();
+		
+	
+			}
 
-                context.Cheeses.Add(newCheese);
-                context.SaveChanges();
-
-                return Redirect("/Cheese");
-            }
-
-            return View(addCheeseViewModel);
-        }
-
-        public IActionResult Remove()
-        {
-            ViewBag.title = "Remove Cheeses";
-            ViewBag.cheeses = context.Cheeses.ToList();
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Remove(int[] cheeseIds)
-        {
-            foreach (int cheeseId in cheeseIds)
-            {
-                Cheese theCheese = context.Cheeses.Single(c => c.ID == cheeseId);
-                context.Cheeses.Remove(theCheese);
-            }
-
-            context.SaveChanges();
-
-            return Redirect("/");
-        }
-    }
+		[HttpPost]
+		public IActionResult Remove(int[] cheeseIds)
+		{
+			foreach (int cheeseId in cheeseIds)
+			{
+				Cheese theCheese = context.Cheeses.Single(c => c.ID == cheeseId);
+				context.Cheeses.Remove(theCheese);
+			}
+			context.SaveChanges();
+			return Redirect("/");
+		}
+	}
 }
+    
+

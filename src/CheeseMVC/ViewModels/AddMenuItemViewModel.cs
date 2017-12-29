@@ -21,16 +21,16 @@ namespace CheeseMVC.ViewModels
 		public List<SelectListItem> Cheeses { get; set; }
 
 		public AddMenuItemViewModel() { }
-		public AddMenuItemViewModel(Menu aMenu, IEnumerable<Cheese> theSelectListCheeses)
+		public AddMenuItemViewModel(Menu theMenu, IEnumerable<Cheese> theSelectListCheeses)
 	{
 
-		Menu = aMenu;
+		Menu = theMenu;
 
 		Cheeses = new List<SelectListItem>();
 
 		foreach (var cheese in theSelectListCheeses)
 		{
-			Cheese.Add(new SelectListItem
+			Cheeses.Add(new SelectListItem
 			{
 				Value = cheese.ID.ToString(),
 				Text = cheese.Name

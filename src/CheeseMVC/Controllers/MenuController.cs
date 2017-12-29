@@ -13,7 +13,7 @@ namespace CheeseMVC.Controllers
 	public class MenuController : Controller
 	{
 		private CheeseDbContext context;
-		private IList<CheeseMenu> items;
+		
 
 		public MenuController(CheeseDbContext dbContext)
 		{
@@ -58,7 +58,7 @@ namespace CheeseMVC.Controllers
 		[HttpGet]
 		public IActionResult ViewMenu(int id)
 		{
-			List<CheeseMenu> Items = context
+			List<CheeseMenu> items = context
 				.CheeseMenus
 				.Include(item => item.Cheese)
 				.Where(cm => cm.MenuID == id)

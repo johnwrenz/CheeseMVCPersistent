@@ -4,25 +4,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CheeseMVC.Models
 {
-    public class Cheese
-    {
-		public int ID { get; set; }
+	public class Cheese
+	{
+		public int ID { get; set; } 
 		public string Name { get; set; }
-        public string Description { get; set; }
+		public string Description { get; set; }
 
-		public int CategoryID { get; set; }
 		public CheeseCategory Category { get; set; }
+	    public int CategoryID { get; set; }
 
-		public List<CheeseMenu> CheeseMenus { get; set; }
-
-		internal static void Add(SelectListItem selectListItem)
-		{
-			throw new NotImplementedException();
-		}
+	    public List<CheeseMenu> CheeseMenus { get; set; }
 
 		//internal static void Add(SelectListItem selectListItem)
 		//{
-		//throw new NotImplementedException();
+		//	throw new NotImplementedException();
 		//}
 	}
 }
+
+
+
